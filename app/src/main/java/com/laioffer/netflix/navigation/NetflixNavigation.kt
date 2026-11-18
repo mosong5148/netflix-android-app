@@ -50,7 +50,11 @@ fun NetflixNavHost(
         }
 
         composable(route = Screen.BottomBarScreen.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(
+                onVideoClick = { videoId ->
+                    navController.navigate(Screen.VideoDetail.createRoute(videoId))
+                }
+            )
         }
     }
 }
