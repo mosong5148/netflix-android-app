@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.laioffer.netflix.database.FavoriteDao
+import com.laioffer.netflix.database.VideoEntity
 import com.laioffer.netflix.navigation.NetflixNavHost
 import com.laioffer.netflix.navigation.Screen
 import com.laioffer.netflix.network.NetworkApi
@@ -37,17 +39,22 @@ import javax.inject.Inject
 
 private const val TAG = "MainActivity"
 private const val NETWORK_TAG = "Network"
+private const val DATABASE_TAG = "Database"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var networkApi: NetworkApi
 
+    @Inject
+    lateinit var favoriteDao: FavoriteDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         enableEdgeToEdge()
         logHomeResponse()
+        testFavoriteDatabaseSetup()
         setContent {
             NetflixTheme {
                 Surface(
@@ -113,6 +120,22 @@ class MainActivity : ComponentActivity() {
                 }
             } catch (t: Throwable) {
                 Log.e(NETWORK_TAG, "Home request error", t)
+            }
+        }
+    }
+
+    private fun testFavoriteDatabaseSetup() {
+        lifecycleScope.launch {
+            try {
+                favoriteDao.insert(
+                    VideoEntity(
+                        id = "kpop-demon-hunters",
+                        title = "KPop Demon Hunters",
+                        posterUrl = ""
+                    )
+                )
+            } catch (t: Throwable) {
+                Log.e(DATABASE_TAG, "Favorite database test failed", t)
             }
         }
     }
