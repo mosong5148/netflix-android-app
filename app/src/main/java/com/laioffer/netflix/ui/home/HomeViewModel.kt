@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,10 +26,13 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     fun fetchHomeFeed() {
+        Log.d("Tim", Thread.currentThread().name + " 1")
         viewModelScope.launch {
             try {
+                Log.d("Tim", Thread.currentThread().name + " 2")
                 _uiState.value = HomeUiState.Loading
                 val response = repository.getHomeFeed()
+                Log.d("Tim", Thread.currentThread().name + " 4")
                 Log.d(TAG, "Loaded home feed: ${response.sections.size} sections")
                 _uiState.value = HomeUiState.Success(
                     topRecommended = response.topRecommended,
@@ -38,6 +42,12 @@ class HomeViewModel @Inject constructor(
                 Log.e(TAG, "Failed to load home feed", e)
                 _uiState.value = HomeUiState.Error(e.message ?: "Unable to load home feed")
             }
+        }
+        
+        viewModelScope.launch {
+            Log.d("Tim", Thread.currentThread().name + " 5")
+            delay(1000)
+            Log.d("Tim", Thread.currentThread().name + " 6")
         }
     }
 }
