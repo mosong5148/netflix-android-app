@@ -21,7 +21,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8: shrink, optimize and obfuscate code; drop unused resources.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            // Sign local release builds with the debug key so they can be installed for benchmarking.
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
